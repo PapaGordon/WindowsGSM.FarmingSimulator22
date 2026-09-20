@@ -17,7 +17,7 @@ namespace WindowsGSM.Plugins
             name = "WindowsGSM.FarmingSimulator22",
             author = "MeFriendos",
             description = "WindowsGSM plugin for Farming Simulator 22 Dedicated Server",
-            version = "0.1.0",
+            version = "0.1.1",
             url = "https://github.com/PapaGordon/WindowsGSM.FarmingSimulator22",
             color = "#80B918"
         };
@@ -64,6 +64,29 @@ namespace WindowsGSM.Plugins
             await Task.Run(() => EnsureSteamAppIdFile());
         }
 
+        // Raziel's fork uses the same SteamCMD agent, but its base Update()
+        // assumes SteamCMD always returned a process. Keep a missing account
+        // or failed SteamCMD start as a normal WindowsGSM error instead.
+        public new async Task<Process> Update(bool validate = false, string custom = null)
+        {
+            var result = await WindowsGSM.Installer.SteamCMD.UpdateEx(
+                _serverData.ServerID,
+                AppId,
+                validate,
+                custom: custom,
+                loginAnonymous: loginAnonymous
+            );
+
+            Process process = result.Item1;
+            Error = result.Item2;
+
+            if (process == null)
+                return null;
+
+            await Task.Run(() => process.WaitForExit());
+            return process;
+        }
+
         public Task<Process> Start()
         {
             string serverFiles = ServerPath.GetServersServerFiles(_serverData.ServerID);
@@ -101,7 +124,9 @@ namespace WindowsGSM.Plugins
                 return Task.FromResult<Process>(null);
             }
 
-            bool embedConsole = _serverData.EmbedConsole;
+            // Raziel writes the current Embed Console state into this field
+            // immediately before Start(), so use that live value here.
+            bool embedConsole = AllowsEmbedConsole;
 
             var process = new Process
             {

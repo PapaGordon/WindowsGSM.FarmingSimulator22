@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.1
+
+Raziel WindowsGSM compatibility pass.
+
+- Checked the plugin against Raziel7893/WindowsGSM v1.25.2.1 source.
+- Switched Embedded Console handling to the live `AllowsEmbedConsole` value Raziel sets before startup.
+- Added a guarded update path for missing Steam credentials or a failed SteamCMD process.
+- Confirmed the firewall cleanup targets the same authorized-application rule type Raziel creates.
+
 ## 0.1.0
 
 Initial Farming Simulator 22 support.

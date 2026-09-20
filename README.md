@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/Raziel7893/WindowsGSM/releases/tag/v1.25.2.1"><img src="https://img.shields.io/badge/WindowsGSM-Raziel%20v1.25.2.1-38CDD4" alt="Raziel WindowsGSM v1.25.2.1"></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-0.1.0-80B918" alt="Version 0.1.0"></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-0.1.1-80B918" alt="Version 0.1.1"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
 </p>
 
@@ -26,11 +26,13 @@ The plugin keeps the GIANTS server setup intact: WindowsGSM handles installation
 - Starts the official `dedicatedServer.exe` server manager.
 - Checks that `FarmingSimulator2022Game.exe` and `dedicatedServer.xml` are present before startup.
 - Creates `steam_appid.txt` with the correct App ID when needed.
-- Supports the WindowsGSM Embedded Console.
+- Supports the WindowsGSM Embedded Console using the live state Raziel passes through `AllowsEmbedConsole`.
 - Sends CTRL+C first for a clean shutdown before using fallback methods.
 - Removes WindowsGSM's broad automatic firewall application exception for the exact `dedicatedServer.exe` path.
 - Leaves targeted manual firewall rules untouched.
 - Does not change the GIANTS web-panel configuration automatically.
+
+- Handles a missing Steam account or failed SteamCMD update cleanly instead of relying on Raziel's base update path.
 
 ## Quick overview
 
@@ -48,6 +50,18 @@ The plugin keeps the GIANTS server setup intact: WindowsGSM handles installation
 | Embedded Console | Supported |
 | Server configuration | GIANTS web panel |
 | Firewall | Manual port rules only |
+
+## Raziel WindowsGSM compatibility
+
+Version 0.1.1 was checked directly against the source of **Raziel7893/WindowsGSM v1.25.2.1**.
+
+The plugin uses interfaces that are present in that fork: `SteamCMDAgent`, `ServerConfig`, `ServerPath`, `ServerConsole.AddOutput` and the plugin loader's current Roslyn compilation path. With `loginAnonymous = false`, Raziel also enables its **Set Account** and Steam Guard token controls for installation.
+
+Raziel sets `gameServer.AllowsEmbedConsole` to the current UI state immediately before calling `Start()`. Version 0.1.1 now reads that value directly.
+
+The fork also creates its automatic application firewall exception through `HNetCfg.FwMgr` and `AuthorizedApplications`. That is the same rule type the plugin removes before starting `dedicatedServer.exe`.
+
+This confirms source/API compatibility with Raziel v1.25.2.1. The remaining check is a real FS22 install/start on Windows, because that also depends on Steam ownership and GIANTS' server files.
 
 ## Requirements
 
