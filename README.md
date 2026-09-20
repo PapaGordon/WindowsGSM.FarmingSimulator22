@@ -1,100 +1,219 @@
-# WindowsGSM.FarmingSimulator22
+<p align="center">
+  <img src="FarmingSimulator22.cs/FarmingSimulator22.png" alt="Farming Simulator 22" width="128">
+</p>
 
-WindowsGSM plugin for running a Farming Simulator 22 dedicated server on Windows.
+<h1 align="center">WindowsGSM.FarmingSimulator22</h1>
 
-This first version sticks close to the way GIANTS ships the server. WindowsGSM installs and updates the Steam copy, starts `dedicatedServer.exe`, shows its console output and stops it cleanly with CTRL+C. The actual game settings still live in the Farming Simulator web panel.
+<p align="center">
+  MeFriendos build for running a Farming Simulator 22 dedicated server with WindowsGSM.
+</p>
 
-## What it does
+<p align="center">
+  <a href="https://github.com/Raziel7893/WindowsGSM/releases/tag/v1.25.2.1"><img src="https://img.shields.io/badge/WindowsGSM-Raziel%20v1.25.2.1-38CDD4" alt="Raziel WindowsGSM v1.25.2.1"></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-0.1.0-80B918" alt="Version 0.1.0"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
+</p>
+
+This plugin installs, updates and runs the Farming Simulator 22 dedicated server with WindowsGSM. Unlike most Steam dedicated servers, FS22 uses the normal game installation and therefore needs a Steam account that owns Farming Simulator 22.
+
+The plugin keeps the GIANTS server setup intact: WindowsGSM handles installation and the server process, while the actual game server settings stay in the official Farming Simulator web panel.
+
+## Features
 
 - Installs and updates Farming Simulator 22 through SteamCMD.
 - Uses Steam App ID `1248130`.
-- Requires a Steam account that owns Farming Simulator 22. Anonymous SteamCMD login does not work for this game.
+- Uses a normal Steam account instead of anonymous SteamCMD login.
 - Starts the official `dedicatedServer.exe` server manager.
-- Supports the WindowsGSM embedded console.
-- Stops the server manager with CTRL+C before using any forced fallback.
-- Creates `steam_appid.txt` with the Farming Simulator 22 App ID. This avoids the Steam launch confirmation that otherwise gets in the way on unattended Steam servers.
-- Removes WindowsGSM's broad automatic firewall exception for `dedicatedServer.exe` before it starts listening.
-- Does not create firewall rules on its own.
+- Checks that `FarmingSimulator2022Game.exe` and `dedicatedServer.xml` are present before startup.
+- Creates `steam_appid.txt` with the correct App ID when needed.
+- Supports the WindowsGSM Embedded Console.
+- Sends CTRL+C first for a clean shutdown before using fallback methods.
+- Removes WindowsGSM's broad automatic firewall application exception for the exact `dedicatedServer.exe` path.
+- Leaves targeted manual firewall rules untouched.
+- Does not change the GIANTS web-panel configuration automatically.
+
+## Quick overview
+
+| Setting | Value |
+| --- | --- |
+| Steam App ID | `1248130` |
+| SteamCMD login | Licensed Steam account required |
+| Start executable | `dedicatedServer.exe` |
+| Game executable | `x64\FarmingSimulator2022Game.exe` |
+| Default game port | `10823` |
+| Default web panel | `8080` |
+| Default max players | `16` |
+| Port increment | `1` |
+| Query method | None in WindowsGSM |
+| Embedded Console | Supported |
+| Server configuration | GIANTS web panel |
+| Firewall | Manual port rules only |
 
 ## Requirements
 
-- WindowsGSM
-- Windows Server or Windows 10/11 x64
-- A dedicated Steam account with its own Farming Simulator 22 license
-- Administrator rights for WindowsGSM if the firewall safety check is enabled
+- [Raziel7893/WindowsGSM v1.25.2.1](https://github.com/Raziel7893/WindowsGSM/releases/tag/v1.25.2.1) or a compatible WindowsGSM build
+- 64-bit Windows
+- Administrator rights for WindowsGSM when the firewall safety check needs to remove a broad application exception
+- A Steam account with its own Farming Simulator 22 license
 
-The server needs its own game license. Do not use the same Steam account for the dedicated server and a player who is supposed to join it at the same time.
+Raziel's current WindowsGSM builds use the **.NET 8 Desktop Runtime**. If you are moving from the original WindowsGSM build, install the Desktop Runtime rather than only the normal .NET 8 runtime.
 
-## Install the plugin
+The dedicated server needs its own Farming Simulator 22 license. Do not plan to use the same Steam account for the server and a player who needs to play at the same time.
 
-1. Download the latest release.
-2. Put the complete `FarmingSimulator22.cs` folder into `<WindowsGSM>\plugins\`.
-3. Reload plugins or restart WindowsGSM.
+## Plugin installation
+
+1. Download the latest release archive.
+2. Extract the complete `FarmingSimulator22.cs` folder into `<WindowsGSM>\plugins\`.
+3. Click **Reload Plugins** or restart WindowsGSM.
 4. Add **Farming Simulator 22 Dedicated Server**.
-5. Use **Set Account** in the WindowsGSM install window and enter the Steam account that owns LS22.
-6. Install the server.
-7. Start it once and open the URL printed by `dedicatedServer.exe`.
+5. In the install window use **Set Account** and enter a Steam account that owns Farming Simulator 22.
+6. Run **Install**.
+7. Start the server manager.
+8. Open the web panel URL shown by `dedicatedServer.exe` and finish the game server setup there.
+9. Create the required game-port firewall rule manually.
 
-Steam Guard can still ask for a code during installation or updates. That is normal for a non-anonymous SteamCMD login.
+Steam Guard can ask for a code during installation or updates because FS22 cannot be installed anonymously through SteamCMD.
 
-## Configuration
+## Steam account and installation
 
-Farming Simulator 22 keeps its actual server settings in the official web panel. The normal defaults are:
+Farming Simulator 22 does not use a separate anonymous Steam dedicated-server app. The dedicated server files are part of the normal game installation.
 
-| Setting | Default |
+WindowsGSM therefore installs App ID:
+
+```text
+1248130
+```
+
+with the Steam account configured through **Set Account**.
+
+The plugin also makes sure the following file exists in the server root:
+
+```text
+steam_appid.txt
+```
+
+with:
+
+```text
+1248130
+```
+
+This helps avoid Steam's launch confirmation getting in the way when the server manager starts the game process. It does not replace the required FS22 license.
+
+## Server configuration
+
+FS22 keeps the actual dedicated-server configuration in the GIANTS web panel.
+
+The plugin deliberately does not rewrite `dedicatedServer.xml` or mirror WindowsGSM fields into the GIANTS configuration in version 0.1.0. This avoids WindowsGSM unexpectedly overwriting settings that were changed through the official panel.
+
+The **Server Name**, **Map**, **Max Players** and **Port** values shown in WindowsGSM should therefore be treated as instance/default information for now. Configure the live game server through the web panel.
+
+## Ports and firewall
+
+The default game port is:
+
+| Purpose | Port |
 | --- | --- |
-| Game port | `10823` |
-| Player slots | up to `16` |
-| Web panel | usually `8080` for HTTP |
-| Server manager | `dedicatedServer.exe` |
-| Game process | `x64\FarmingSimulator2022Game.exe` |
+| Farming Simulator 22 game traffic | `10823` |
+| GIANTS web panel | `8080` by default |
 
-The **Port**, **Server Name**, **Map** and **Max Players** fields in WindowsGSM are not written into the Farming Simulator configuration in v0.1.0. Change the live server settings in the GIANTS web panel for now.
+The plugin removes the unrestricted WindowsGSM application exception for the exact `dedicatedServer.exe` path before startup.
 
-## Firewall
+It does **not** create firewall rules automatically.
 
-The plugin deliberately removes the unrestricted WindowsGSM application exception for `dedicatedServer.exe`.
+For the MeFriendos setup:
 
-Create narrow rules yourself instead:
+- Allow only the game port that the FS22 server actually uses.
+- Keep the web panel on localhost, LAN or WireGuard/VPN access.
+- Do not expose the admin web panel publicly unless there is a specific reason to do so.
+- Adjust the firewall rule when you change the game port in the GIANTS configuration.
 
-- Allow the Farming Simulator game port required by your server configuration.
-- Keep the web panel private. Prefer localhost, LAN or WireGuard/VPN access instead of publishing the admin panel to the internet.
-- If you change the game or web port in the Farming Simulator configuration, adjust the firewall rule as well.
+Existing manual firewall rules are left untouched.
 
-The plugin leaves your manual firewall rules alone.
+## Embedded Console and shutdown
 
-## Embedded console
+When **Embed Console** is enabled, stdout and stderr from `dedicatedServer.exe` are redirected into WindowsGSM and the native console window stays hidden.
 
-With **Embed Console** enabled, output from `dedicatedServer.exe` is shown inside WindowsGSM. The native console stays hidden.
+When stopping the server, the plugin uses this order:
 
-On shutdown the plugin sends CTRL+C first because that is the shutdown method the GIANTS server manager itself asks for. If that fails, it tries to close the window and only then falls back to terminating the process.
+1. Send CTRL+C and wait up to 30 seconds.
+2. Try to close the native server-manager window.
+3. Use `Process.Kill()` only if the normal shutdown methods failed.
 
-## Notes about the Steam version
+The forced kill is intentionally the last fallback.
 
-Farming Simulator 22 does not have a separate anonymous Steam dedicated-server app. The dedicated server files are part of the normal game installation, so WindowsGSM has to install App ID `1248130` with an account that owns the game.
+## Updating Farming Simulator 22
 
-The plugin writes `steam_appid.txt` into the server root. This is a common workaround for the Steam confirmation dialog when `dedicatedServer.exe` starts the game process. It does not replace the required game license.
+1. Stop the server.
+2. Back up the savegame and server configuration.
+3. Click **Update** in WindowsGSM.
+4. Complete Steam Guard authentication if Steam asks for it.
+5. Start the server manager again.
+6. Check the web panel and server log before opening the server to players.
 
-## First test
+WindowsGSM updates the game installation. The plugin does not intentionally change savegames, mods or the GIANTS server configuration.
 
-For the first run I would check these points before treating the plugin as finished:
+## Troubleshooting
 
-- Install completes with the dedicated Steam account.
-- `dedicatedServer.exe` starts from WindowsGSM.
-- The embedded console shows the web panel URLs and the CTRL+C shutdown line.
-- The web panel can start `FarmingSimulator2022Game.exe` without a Steam confirmation popup.
-- The game becomes joinable on the configured port.
-- WindowsGSM Stop shuts both the web manager and game server down cleanly.
-- No broad `dedicatedServer.exe` firewall exception remains afterwards.
+### WindowsGSM asks for a Steam account
 
-## Project
+That is expected. FS22 cannot be installed through anonymous SteamCMD login. Use **Set Account** with an account that owns Farming Simulator 22.
 
-- Source: https://github.com/PapaGordon/WindowsGSM.FarmingSimulator22
-- WindowsGSM: https://github.com/WindowsGSM/WindowsGSM
-- Community: https://mefriendos.de
+### Steam Guard asks for a code
 
-This is an independent community plugin and is not affiliated with GIANTS Software, Valve or WindowsGSM.
+That is normal for the licensed Steam account used by SteamCMD. Complete the authentication and let WindowsGSM continue the install or update.
+
+### Startup says dedicatedServer.exe is missing
+
+Run **Update** with validation or reinstall the server files. The plugin will not start an incomplete FS22 installation.
+
+### Startup says FarmingSimulator2022Game.exe is missing
+
+The normal game installation is incomplete. Validate the installation through WindowsGSM/SteamCMD.
+
+### dedicatedServer.xml is missing
+
+Validate the FS22 installation. The plugin expects the normal GIANTS dedicated-server files to be present.
+
+### Players cannot connect
+
+Check the game port configured in the GIANTS web panel and make sure the same port is allowed by a narrow firewall rule and forwarded where required.
+
+### The web panel is not reachable remotely
+
+This can be intentional. For the MeFriendos setup the admin panel should stay private and be accessed through LAN or WireGuard/VPN rather than a public firewall rule.
+
+### WindowsGSM reports that automatic firewall access could not be disabled
+
+Run WindowsGSM as administrator. If an unrestricted `dedicatedServer.exe` application rule exists, remove it manually and keep only the intended port-specific rules.
+
+## Testing checklist
+
+- Raziel WindowsGSM loads `FarmingSimulator22.cs` without a plugin error.
+- Install works with a Steam account that owns Farming Simulator 22.
+- Steam Guard authentication can complete when required.
+- `dedicatedServer.exe` exists after installation.
+- `x64\FarmingSimulator2022Game.exe` exists after installation.
+- `dedicatedServer.xml` is present.
+- `steam_appid.txt` contains `1248130`.
+- The server manager starts from WindowsGSM.
+- With Embed Console enabled, useful `dedicatedServer.exe` output appears in WindowsGSM.
+- The GIANTS web panel can start the actual game server.
+- Players can join through the manually configured game port.
+- Stop sends CTRL+C before any forced termination.
+- No broad `dedicatedServer.exe` Windows Firewall application exception remains after startup.
+- Manual port rules remain untouched.
+
+## Project links
+
+- Source: [PapaGordon/WindowsGSM.FarmingSimulator22](https://github.com/PapaGordon/WindowsGSM.FarmingSimulator22)
+- WindowsGSM: [Raziel7893/WindowsGSM](https://github.com/Raziel7893/WindowsGSM)
+- Current WindowsGSM release: [v1.25.2.1](https://github.com/Raziel7893/WindowsGSM/releases/tag/v1.25.2.1)
+- Farming Simulator: [farming-simulator.com](https://www.farming-simulator.com/)
+- Community: [mefriendos.de](https://mefriendos.de)
+
+This is an independent community plugin. It is not affiliated with or endorsed by GIANTS Software, Valve or WindowsGSM.
 
 ## License
 
-MIT. See `LICENSE`.
+This MeFriendos plugin is released under the [MIT License](LICENSE).
