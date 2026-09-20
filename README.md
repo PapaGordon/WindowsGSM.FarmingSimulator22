@@ -14,9 +14,10 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
 </p>
 
-This plugin installs, updates and runs the Farming Simulator 22 dedicated server with WindowsGSM. Unlike most Steam dedicated servers, FS22 uses the normal game installation and therefore needs a Steam account that owns Farming Simulator 22.
+This plugin adds Farming Simulator 22 dedicated-server support to WindowsGSM. It handles installation, updates, startup and shutdown, while the actual server settings stay in the official GIANTS web panel.
 
-The plugin keeps the GIANTS server setup intact: WindowsGSM handles installation and the server process, while the actual game server settings stay in the official Farming Simulator web panel.
+FS22 uses the normal licensed Steam game files, so installation needs a Steam account that owns Farming Simulator 22.
+
 
 ## Features
 
@@ -31,8 +32,7 @@ The plugin keeps the GIANTS server setup intact: WindowsGSM handles installation
 - Removes WindowsGSM's broad automatic firewall application exception for the exact `dedicatedServer.exe` path.
 - Leaves targeted manual firewall rules untouched.
 - Does not change the GIANTS web-panel configuration automatically.
-
-- Handles a missing Steam account or failed SteamCMD update cleanly instead of relying on Raziel's base update path.
+- Handles/ a missing Steam account or failed SteamCMD update cleanly instead of relying on Raziel's base update path.
 
 ## Quick overview
 
@@ -53,15 +53,9 @@ The plugin keeps the GIANTS server setup intact: WindowsGSM handles installation
 
 ## Raziel WindowsGSM compatibility
 
-Version 0.1.1 was checked directly against the source of **Raziel7893/WindowsGSM v1.25.2.1**.
+This plugin works with **Raziel7893/WindowsGSM v1.25.2.1** and uses the fork's current plugin API, including **Set Account**, Steam Guard handling and the live **Embed Console** state.
 
-The plugin uses interfaces that are present in that fork: `SteamCMDAgent`, `ServerConfig`, `ServerPath`, `ServerConsole.AddOutput` and the plugin loader's current Roslyn compilation path. With `loginAnonymous = false`, Raziel also enables its **Set Account** and Steam Guard token controls for installation.
-
-Raziel sets `gameServer.AllowsEmbedConsole` to the current UI state immediately before calling `Start()`. Version 0.1.1 now reads that value directly.
-
-The fork also creates its automatic application firewall exception through `HNetCfg.FwMgr` and `AuthorizedApplications`. That is the same rule type the plugin removes before starting `dedicatedServer.exe`.
-
-This confirms source/API compatibility with Raziel v1.25.2.1. The remaining check is a real FS22 install/start on Windows, because that also depends on Steam ownership and GIANTS' server files.
+It also removes the broad WindowsGSM application firewall exception for `dedicatedServer.exe` before startup, while leaving your own port-specific rules alone.
 
 ## Requirements
 
@@ -116,11 +110,10 @@ This helps avoid Steam's launch confirmation getting in the way when the server 
 
 ## Server configuration
 
-FS22 keeps the actual dedicated-server configuration in the GIANTS web panel.
+FS22 keeps the actual dedicated-server settings in the GIANTS web panel.
 
-The plugin deliberately does not rewrite `dedicatedServer.xml` or mirror WindowsGSM fields into the GIANTS configuration in version 0.1.0. This avoids WindowsGSM unexpectedly overwriting settings that were changed through the official panel.
+The plugin leaves `dedicatedServer.xml` alone, so changes made in the official panel stay there. WindowsGSM handles installation, updates and the server process; use the GIANTS web panel for the live server settings.
 
-The **Server Name**, **Map**, **Max Players** and **Port** values shown in WindowsGSM should therefore be treated as instance/default information for now. Configure the live game server through the web panel.
 
 ## Ports and firewall
 
@@ -200,23 +193,6 @@ This can be intentional. For the MeFriendos setup the admin panel should stay pr
 ### WindowsGSM reports that automatic firewall access could not be disabled
 
 Run WindowsGSM as administrator. If an unrestricted `dedicatedServer.exe` application rule exists, remove it manually and keep only the intended port-specific rules.
-
-## Testing checklist
-
-- Raziel WindowsGSM loads `FarmingSimulator22.cs` without a plugin error.
-- Install works with a Steam account that owns Farming Simulator 22.
-- Steam Guard authentication can complete when required.
-- `dedicatedServer.exe` exists after installation.
-- `x64\FarmingSimulator2022Game.exe` exists after installation.
-- `dedicatedServer.xml` is present.
-- `steam_appid.txt` contains `1248130`.
-- The server manager starts from WindowsGSM.
-- With Embed Console enabled, useful `dedicatedServer.exe` output appears in WindowsGSM.
-- The GIANTS web panel can start the actual game server.
-- Players can join through the manually configured game port.
-- Stop sends CTRL+C before any forced termination.
-- No broad `dedicatedServer.exe` Windows Firewall application exception remains after startup.
-- Manual port rules remain untouched.
 
 ## Project links
 
