@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/Raziel7893/WindowsGSM/releases/tag/v1.25.2.1"><img src="https://img.shields.io/badge/WindowsGSM-Raziel%20v1.25.2.1-38CDD4" alt="Raziel WindowsGSM v1.25.2.1"></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-0.1.1-80B918" alt="Version 0.1.1"></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-0.1.2-80B918" alt="Version 0.1.2"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
 </p>
 
@@ -29,7 +29,7 @@ FS22 uses the normal licensed Steam game files, so installation needs a Steam ac
 - Creates `steam_appid.txt` with the correct App ID when needed.
 - Supports the WindowsGSM Embedded Console using the live state Raziel passes through `AllowsEmbedConsole`.
 - Sends CTRL+C first for a clean shutdown before using fallback methods.
-- Removes WindowsGSM's broad automatic firewall application exception for the exact `dedicatedServer.exe` path.
+- Leaves firewall management to WindowsGSM's per-server **Auto Firewall** setting.
 - Leaves targeted manual firewall rules untouched.
 - Does not change the GIANTS web-panel configuration automatically.
 - Handles/ a missing Steam account or failed SteamCMD update cleanly instead of relying on Raziel's base update path.
@@ -49,19 +49,18 @@ FS22 uses the normal licensed Steam game files, so installation needs a Steam ac
 | Query method | None in WindowsGSM |
 | Embedded Console | Supported |
 | Server configuration | GIANTS web panel |
-| Firewall | Manual port rules only |
+| Firewall | WindowsGSM Auto Firewall or manual port rules |
 
 ## Raziel WindowsGSM compatibility
 
 This plugin works with **Raziel7893/WindowsGSM v1.25.2.1** and uses the fork's current plugin API, including **Set Account**, Steam Guard handling and the live **Embed Console** state.
 
-It also removes the broad WindowsGSM application firewall exception for `dedicatedServer.exe` before startup, while leaving your own port-specific rules alone.
+Firewall management follows WindowsGSM's per-server **Auto Firewall** setting.
 
 ## Requirements
 
-- [Raziel7893/WindowsGSM v1.25.2.1](https://github.com/Raziel7893/WindowsGSM/releases/tag/v1.25.2.1) or a compatible WindowsGSM build
+- A compatible WindowsGSM build with per-server **Auto Firewall**, such as [our WindowsGSM build](https://github.com/PapaGordon/WindowsGSM)
 - 64-bit Windows
-- Administrator rights for WindowsGSM when the firewall safety check needs to remove a broad application exception
 - A Steam account with its own Farming Simulator 22 license
 
 Raziel's current WindowsGSM builds use the **.NET 8 Desktop Runtime**. If you are moving from the original WindowsGSM build, install the Desktop Runtime rather than only the normal .NET 8 runtime.
@@ -124,9 +123,9 @@ The default game port is:
 | Farming Simulator 22 game traffic | `10823` |
 | GIANTS web panel | `8080` by default |
 
-The plugin removes the unrestricted WindowsGSM application exception for the exact `dedicatedServer.exe` path before startup.
+Firewall management follows WindowsGSM's per-server **Auto Firewall** setting. This plugin does not create, remove or inspect firewall rules and does not block startup for a plugin firewall check.
 
-It does **not** create firewall rules automatically.
+Use a WindowsGSM build with **Auto Firewall**, such as our [WindowsGSM build](https://github.com/PapaGordon/WindowsGSM). For the MeFriendos setup with manual port rules, turn **Auto Firewall** off for this server in WindowsGSM and configure the required ports yourself. Router forwarding remains separate.
 
 For the MeFriendos setup:
 
@@ -189,10 +188,6 @@ Check the game port configured in the GIANTS web panel and make sure the same po
 ### The web panel is not reachable remotely
 
 This can be intentional. For the MeFriendos setup the admin panel should stay private and be accessed through LAN or WireGuard/VPN rather than a public firewall rule.
-
-### WindowsGSM reports that automatic firewall access could not be disabled
-
-Run WindowsGSM as administrator. If an unrestricted `dedicatedServer.exe` application rule exists, remove it manually and keep only the intended port-specific rules.
 
 ## Project links
 
