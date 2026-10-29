@@ -16,7 +16,7 @@ namespace WindowsGSM.Plugins
             name = "WindowsGSM.FarmingSimulator22",
             author = "MeFriendos",
             description = "WindowsGSM plugin for Farming Simulator 22 Dedicated Server",
-            version = "0.1.2",
+            version = "0.1.3",
             url = "https://github.com/PapaGordon/WindowsGSM.FarmingSimulator22",
             color = "#80B918"
         };
