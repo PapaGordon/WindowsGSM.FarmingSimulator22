@@ -1,25 +1,30 @@
-Farming Simulator 22 - WindowsGSM plugin
+WindowsGSM.FarmingSimulator22 0.1.3
+====================================
 
-Recommended WindowsGSM build:
-MeFriendos WindowsGSM v1.25.3.0 with per-server Auto Firewall.
-https://github.com/PapaGordon/WindowsGSM/releases/tag/v1.25.3.0
-The Windows x64 download includes the .NET runtime.
+Runs a Farming Simulator 22 dedicated server with WindowsGSM.
 
-1. Copy the complete FarmingSimulator22.cs folder into WindowsGSM\plugins.
-2. Reload plugins or restart WindowsGSM.
-3. Add Farming Simulator 22 Dedicated Server.
-4. In the install window use Set Account and sign in with a Steam account that owns Farming Simulator 22.
-5. Install the server.
-6. Start dedicatedServer.exe through WindowsGSM.
-7. Open the GIANTS web panel and finish the game server setup there.
+If you use MeFriendos WindowsGSM, you don't need this plugin.
+Farming Simulator 22 is already built in there.
 
-FS22 needs its own game license and cannot be installed with anonymous SteamCMD login.
+Install
+-------
+1. Copy this whole FarmingSimulator22.cs folder into the "plugins" folder
+   of WindowsGSM.
+2. Click "Reload Plugins" or restart WindowsGSM.
+3. Pick "Farming Simulator 22 Dedicated Server".
+4. Click "Set Account" and sign in with a Steam account that owns
+   Farming Simulator 22. Steam Guard may ask for a code.
+5. Click Install and start the server.
+6. Open the GIANTS web panel and set up your game there.
 
-Firewall management follows WindowsGSM's per-server Auto Firewall setting.
-The plugin does not create, remove or inspect firewall rules and does not block startup for a plugin firewall check.
+Good to know
+------------
+- Name, password, port, slots, map and mods are set in the GIANTS web panel.
+  WindowsGSM doesn't pass them to the server.
+- Keep the web panel private (local network or VPN).
+- The plugin doesn't change firewall rules. Open only the game ports
+  you need.
 
-Use MeFriendos WindowsGSM v1.25.3.0 with Auto Firewall:
-https://github.com/PapaGordon/WindowsGSM/releases/tag/v1.25.3.0
-For manual port rules, turn Auto Firewall off for this server in WindowsGSM and configure the required ports yourself. Router forwarding remains separate.
+Full guide: https://github.com/PapaGordon/WindowsGSM.FarmingSimulator22
 
-Keep the admin web panel private and create only the game-port rules you need.
+MeFriendos build by PapaGordon. https://mefriendos.de
